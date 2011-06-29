@@ -1,0 +1,33 @@
+Backup one or more volumes.
+Multiple backups are saved for today and yesterday, but only one backup for previous days.
+When disk space runs low, the oldest backups are deleted first.
+
+A few files need to be changed and the backup directory needs to be initialized.
+
+1. In backup.sh, change SOURCE_DIR, SOURCE_DIR2, etc.
+   These generally match mount points.
+   The default assumes / and /home are different mount points
+   
+   Also in backup.sh change EXCLUDE_FILE
+
+2. In exclude, add one line for each pattern to exclude
+   ** matches any directory so **/.cache would match /home/myname/.cache and also /.cache
+
+3. In set_backup_environment.sh
+   Change BACKUP_DIR to the directory where the files will be stored
+   Change DESIRED_FREE to a reasonoble value (in kilobytes) for the size of the disk
+      The default is 100000000 (around 100GB) which works well for my backups to a 500GB disk
+      This is the trickiest part. This needs to be large enough for multiple incremental backups.
+      For example if incremental backups are around 5GB and 10 bacukps are done per day, this needs
+      to be more than 50GB. But the larger the number, the fewer the number of backups are retained
+      on disk.
+
+4. The backup directory needs to be initialized
+   In BACKUP_DIR create an empty directory called back-2011-06-28T22_53_32
+   And link this directory to current
+     ln -s back-2011-06-28T22_53_32 current
+   (The timestamp is arbitrary, it just needs to be in the correct format)
+
+
+5. backup.sh and cleanup.sh can now be run as needed.
+   I usually run backup.sh many times per day, but only run cleanup.sh in the morning.
